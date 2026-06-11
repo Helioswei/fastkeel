@@ -1,0 +1,33 @@
+app_name = "{{ project_name }}"
+host = "0.0.0.0"
+port = 8000
+
+# 必填：生成一个随机密钥
+# jwt_secret = "your-secret-here"
+
+db_url = "sqlite:///data/app.db"
+# db_echo = false
+
+{% if with_social %}
+[social]
+enable_groups = true
+{% endif %}
+
+{% if with_payment %}
+[payment]
+plans = [
+  { id = "monthly", name = "月度会员", price = 1000, duration_days = 30 },
+  { id = "yearly",  name = "年度会员", price = 9800, duration_days = 365 },
+]
+{% endif %}
+
+{% if with_jobs %}
+[jobs]
+# weekly_report = { trigger = "cron", hour = 10, minute = 0, day_of_week = "sun" }
+{% endif %}
+
+# LLM 配置（导入 fastkeel.contrib.llm.LLMClient 时需要）
+# [llm]
+# api_key = ""
+# api_base = "https://api.deepseek.com"
+# model = "deepseek-chat"

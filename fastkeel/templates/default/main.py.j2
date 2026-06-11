@@ -1,0 +1,16 @@
+from fastkeel import create_app, Config
+{% if with_user %}from fastkeel.modules import include_user{% endif %}
+{% if with_social %}from fastkeel.modules import include_social{% endif %}
+{% if with_payment %}from fastkeel.modules import include_payment{% endif %}
+{% if with_jobs %}from fastkeel.modules import include_jobs{% endif %}
+
+from project.routes import router as biz_router
+
+config = Config.from_toml("config.toml")
+app = create_app(config)
+
+{% if with_user %}include_user(app, config){% endif %}
+{% if with_social %}include_social(app, config){% endif %}
+{% if with_payment %}include_payment(app, config){% endif %}
+{% if with_jobs %}include_jobs(app, config){% endif %}
+app.include_router(biz_router, prefix="/api/v1")

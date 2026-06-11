@@ -1,0 +1,19 @@
+import pytest
+from fastapi.testclient import TestClient
+
+from fastkeel import create_app, Config
+
+@pytest.fixture
+def config():
+    return Config(db_url="sqlite:///:memory:", jwt_secret="test-secret")
+
+@pytest.fixture
+def app(config):
+    app_ = create_app(config)
+    # include modules here
+    return app_
+
+@pytest.fixture
+def client(app):
+    with TestClient(app) as c:
+        yield c
