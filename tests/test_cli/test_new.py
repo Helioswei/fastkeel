@@ -1,6 +1,4 @@
 # tests/test_cli/test_new.py
-import os
-from pathlib import Path
 
 import pytest
 from typer.testing import CliRunner

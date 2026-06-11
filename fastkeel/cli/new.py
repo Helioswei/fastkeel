@@ -54,4 +54,4 @@ def new(
 
     typer.echo(f"✅ {name} 已创建在 {target_dir}")
     typer.echo(f"   cd {name}")
-    typer.echo(f"   pip install -e .")
+    typer.echo("   pip install -e .")
