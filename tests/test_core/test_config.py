@@ -43,8 +43,8 @@ class TestConfigCustomization:
         assert config.db_url == "sqlite:///:memory:"
 
     def test_custom_jwt_secret(self):
-        config = Config(jwt_secret="my-secret")
-        assert config.jwt_secret == "my-secret"
+        config = Config(jwt_secret="my-secret-0123456789abcdefghijkl")
+        assert config.jwt_secret == "my-secret-0123456789abcdefghijkl"
 
     def test_extra_fields_default_none(self):
         config = Config()

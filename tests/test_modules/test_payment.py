@@ -17,7 +17,7 @@ TEST_PLANS = [
 def payment_app() -> FastAPI:
     config = Config(
         db_url="sqlite:///:memory:",
-        jwt_secret="test-secret",
+        jwt_secret="test-secret-0123456789abcdef1234",
         debug=True,
         payment_plans=TEST_PLANS,
     )

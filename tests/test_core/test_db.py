@@ -7,7 +7,7 @@ from fastkeel.core.config import Config
 from fastkeel.core.db import Base, init_db, get_db
 
 
-class TestDummyModel(Base):
+class DummyModel(Base):
     """Minimal model for testing table creation."""
     __tablename__ = "test_dummy"
     id = Column(String, primary_key=True)
@@ -63,7 +63,7 @@ class TestGetDb:
 
         gen = get_db()
         session = next(gen)
-        dummy = TestDummyModel(id="test-1", value=42)
+        dummy = DummyModel(id="test-1", value=42)
         session.add(dummy)
         session.commit()
         try:
@@ -73,7 +73,7 @@ class TestGetDb:
 
         gen2 = get_db()
         session2 = next(gen2)
-        loaded = session2.get(TestDummyModel, "test-1")
+        loaded = session2.get(DummyModel, "test-1")
         assert loaded is not None
         assert loaded.value == 42
         try:

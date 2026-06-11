@@ -11,7 +11,7 @@ from fastkeel.modules import include_user, include_social
 def app_with_social() -> FastAPI:
     config = Config(
         db_url="sqlite:///:memory:",
-        jwt_secret="test-secret",
+        jwt_secret="test-secret-0123456789abcdef1234",
         debug=True,
         social_enable_groups=True,
     )
@@ -299,7 +299,7 @@ class TestGroupsDisabled:
     def app_no_groups(self) -> FastAPI:
         config = Config(
             db_url="sqlite:///:memory:",
-            jwt_secret="test-secret",
+            jwt_secret="test-secret-0123456789abcdef1234",
             debug=True,
             social_enable_groups=False,
         )

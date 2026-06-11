@@ -13,7 +13,7 @@ from fastkeel.modules import include_user, include_social
 def full_app() -> FastAPI:
     config = Config(
         db_url="sqlite:///:memory:",
-        jwt_secret="integration-test-secret",
+        jwt_secret="integration-test-secret-0123456!",
         debug=True,
     )
     app = create_app(config)
@@ -34,7 +34,7 @@ class TestSocialIntegration:
     def full_app(self) -> FastAPI:
         config = Config(
             db_url="sqlite:///:memory:",
-            jwt_secret="integration-test-secret",
+            jwt_secret="integration-test-secret-0123456!",
             debug=True,
             social_enable_groups=True,
         )

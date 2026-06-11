@@ -12,7 +12,7 @@ def user_app() -> FastAPI:
     """App with user module enabled."""
     config = Config(
         db_url="sqlite:///:memory:",
-        jwt_secret="test-secret",
+        jwt_secret="test-secret-0123456789abcdef1234",
         debug=True,
     )
     app = create_app(config)

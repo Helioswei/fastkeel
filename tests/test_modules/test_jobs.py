@@ -27,7 +27,7 @@ def jobs_config():
 def app_with_jobs(jobs_config) -> FastAPI:
     config = Config(
         db_url="sqlite:///:memory:",
-        jwt_secret="test-secret",
+        jwt_secret="test-secret-0123456789abcdef1234",
         debug=True,
         jobs_config=jobs_config,
     )
@@ -58,7 +58,7 @@ class TestJobs:
     def test_no_jobs_config_creates_only_heartbeat(self):
         config = Config(
             db_url="sqlite:///:memory:",
-            jwt_secret="test-secret",
+            jwt_secret="test-secret-0123456789abcdef1234",
             jobs_config=None,
         )
         app = create_app(config)

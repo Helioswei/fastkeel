@@ -41,7 +41,7 @@ def raw_config() -> Config:
     """Base test config with in-memory SQLite."""
     return Config(
         db_url="sqlite:///:memory:",
-        jwt_secret="test-secret",
+        jwt_secret="test-secret-0123456789abcdef1234",
         debug=True,
     )
 

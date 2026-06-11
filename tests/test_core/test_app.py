@@ -9,7 +9,7 @@ class TestCreateApp:
     """Test the FastAPI app factory."""
 
     def test_create_app_returns_fastapi_instance(self):
-        config = Config(db_url="sqlite:///:memory:", jwt_secret="test-secret")
+        config = Config(db_url="sqlite:///:memory:", jwt_secret="test-secret-0123456789abcdef1234")
         app = create_app(config)
         assert isinstance(app, FastAPI)
 
@@ -17,7 +17,7 @@ class TestCreateApp:
         config = Config(
             app_name="test-app",
             db_url="sqlite:///:memory:",
-            jwt_secret="test-secret",
+            jwt_secret="test-secret-0123456789abcdef1234",
         )
         app = create_app(config)
         assert app.title == "test-app"
@@ -28,7 +28,7 @@ class TestCreateApp:
         config = Config(
             app_name="test-app",
             db_url="sqlite:///:memory:",
-            jwt_secret="test-secret",
+            jwt_secret="test-secret-0123456789abcdef1234",
         )
         app = create_app(config)
         client = TestClient(app)
