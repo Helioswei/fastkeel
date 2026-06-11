@@ -1,5 +1,4 @@
 # tests/test_core/test_app.py
-import pytest
 from fastapi import FastAPI
 
 from fastkeel.core.config import Config
