@@ -3,7 +3,7 @@ import sqlite3
 from collections.abc import Generator
 from typing import Any
 
-from sqlalchemy import Engine, create_engine, event
+from sqlalchemy import Engine, StaticPool, create_engine, event
 from sqlalchemy.orm import Session, declarative_base, sessionmaker
 
 from fastkeel.core.config import Config
@@ -26,13 +26,18 @@ def init_db(config: Config) -> None:
         return  # already initialized
 
     connect_args: dict[str, Any] = {}
+    pool_kwargs: dict[str, Any] = {}
     if config.db_url.startswith("sqlite"):
         connect_args["check_same_thread"] = False
+        # Use StaticPool for in-memory SQLite so connections work across threads
+        if ":memory:" in config.db_url:
+            pool_kwargs["poolclass"] = StaticPool
 
     engine = create_engine(
         config.db_url,
         echo=config.db_echo,
         connect_args=connect_args,
+        **pool_kwargs,
     )
 
     # Enable WAL mode for SQLite
