@@ -1,6 +1,5 @@
 # tests/test_core/test_db.py
 import fastkeel.core.db as db_mod
-import pytest
 from sqlalchemy import Column, Integer, String, text
 from sqlalchemy.orm import Session
 
