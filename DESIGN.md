@@ -173,12 +173,12 @@ project/            ← 这是项目写业务逻辑的地方
 
 ## 六、开源清单（从第一天就做）
 
-- [ ] MIT LICENSE 文件
-- [ ] README.md — 一句话说清楚+快速开始+API 文档链接
-- [ ] pyproject.toml — Python 3.11+，所有依赖声明
-- [ ] GitHub Actions CI — pytest on push/PR
-- [ ] GitHub Actions CD — 打 tag 自动发布到 PyPI
-- [ ] Makefile — lint / test / build / publish
+- [x] MIT LICENSE 文件
+- [x] README.md — 一句话说清楚+快速开始+API 文档链接
+- [x] pyproject.toml — Python 3.11+，所有依赖声明
+- [x] GitHub Actions CI — pytest on push/PR
+- [x] GitHub Actions CD — 打 tag 自动发布到 PyPI
+- [x] Makefile — lint / test / build / publish
 
 ---
 
