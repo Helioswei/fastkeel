@@ -30,9 +30,6 @@ dev = [
     "twine>=4.0.0,<6.0.0",
 ]
 
-[tool.pytest.ini_options]
-asyncio_mode = "auto"
-
 [project.urls]
 Homepage = "https://github.com/helioswei/fastkeel"
 

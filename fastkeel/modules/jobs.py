@@ -2,14 +2,14 @@
 import logging
 from typing import Any
 
-from apscheduler.schedulers.asyncio import AsyncIOScheduler
+from apscheduler.schedulers.background import BackgroundScheduler
 from fastapi import FastAPI
 
 from fastkeel.core.config import Config
 
 logger = logging.getLogger(__name__)
 
-scheduler: AsyncIOScheduler | None = None
+scheduler: BackgroundScheduler | None = None
 
 
 def heartbeat_check() -> None:
@@ -30,11 +30,11 @@ def resolve_job_func(job_name: str) -> Any:
         return lambda: None
 
 
-async def include_jobs(app: FastAPI, config: Config) -> None:
+def include_jobs(app: FastAPI, config: Config) -> None:
     """Initialize APScheduler and register scheduled jobs."""
     global scheduler
 
-    scheduler = AsyncIOScheduler()
+    scheduler = BackgroundScheduler()
 
     # Built-in heartbeat check (every 5 minutes)
     scheduler.add_job(

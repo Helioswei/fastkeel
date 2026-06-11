@@ -7,7 +7,7 @@ from fastkeel.modules import include_jobs
 
 
 @pytest.fixture(autouse=True)
-async def cleanup_scheduler():
+def cleanup_scheduler():
     """Ensure scheduler is stopped after each test."""
     yield
     import fastkeel.modules.jobs as jobs_mod
@@ -24,7 +24,7 @@ def jobs_config():
 
 
 @pytest.fixture
-async def app_with_jobs(jobs_config) -> FastAPI:
+def app_with_jobs(jobs_config) -> FastAPI:
     config = Config(
         db_url="sqlite:///:memory:",
         jwt_secret="test-secret",
@@ -32,37 +32,37 @@ async def app_with_jobs(jobs_config) -> FastAPI:
         jobs_config=jobs_config,
     )
     app = create_app(config)
-    await include_jobs(app, config)
+    include_jobs(app, config)
     return app
 
 
 class TestJobs:
     """Test APScheduler integration."""
 
-    async def test_scheduler_created_and_running(self, app_with_jobs):
+    def test_scheduler_created_and_running(self, app_with_jobs):
         from fastkeel.modules.jobs import scheduler
         assert scheduler is not None
         assert scheduler.running is True
 
-    async def test_heartbeat_job_registered(self, app_with_jobs):
+    def test_heartbeat_job_registered(self, app_with_jobs):
         from fastkeel.modules.jobs import scheduler
         job = scheduler.get_job("_fastkeel_heartbeat")
         assert job is not None
         assert job.id == "_fastkeel_heartbeat"
 
-    async def test_custom_job_registered(self, app_with_jobs):
+    def test_custom_job_registered(self, app_with_jobs):
         from fastkeel.modules.jobs import scheduler
         job = scheduler.get_job("test_interval_job")
         assert job is not None
 
-    async def test_no_jobs_config_creates_only_heartbeat(self):
+    def test_no_jobs_config_creates_only_heartbeat(self):
         config = Config(
             db_url="sqlite:///:memory:",
             jwt_secret="test-secret",
             jobs_config=None,
         )
         app = create_app(config)
-        await include_jobs(app, config)
+        include_jobs(app, config)
 
         from fastkeel.modules.jobs import scheduler
         jobs = scheduler.get_jobs()
@@ -74,6 +74,5 @@ class TestJobs:
         from fastkeel.modules.jobs import resolve_job_func
         func = resolve_job_func("nonexistent_job")
         assert callable(func)
-        # Calling it should not raise
         result = func()
         assert result is None
