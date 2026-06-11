@@ -10,11 +10,22 @@ from fastkeel import create_app, Config
 
 @pytest.fixture(autouse=True)
 def reset_db():
-    """Reset DB engine between tests so each test gets a fresh in-memory database."""
+    """Reset DB engine and module-level configs between tests."""
     import fastkeel.core.db as db_mod
 
     db_mod.engine = None
     db_mod.SessionLocal = None
+    # Reset user module config
+    import fastkeel.modules.user as user_mod
+
+    user_mod._user_config = None
+    # Reset social module config (if module exists)
+    try:
+        import fastkeel.modules.social as social_mod
+
+        social_mod._social_config = None
+    except ImportError:
+        pass
     yield
 
 
