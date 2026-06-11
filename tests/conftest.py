@@ -26,6 +26,13 @@ def reset_db():
         social_mod._social_config = None
     except ImportError:
         pass
+    # Reset payment module config (if module exists)
+    try:
+        import fastkeel.modules.payment as payment_mod
+
+        payment_mod._payment_config = None
+    except ImportError:
+        pass
     yield
 
 
