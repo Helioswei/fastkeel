@@ -168,6 +168,10 @@ class Config:
     # 任务模块
     jobs_config: dict[str, dict] | None = None     # {任务名: cron 参数}
 
+    # 支付模块
+    payment_plans: list[dict] | None = None        # [{id, name, price, duration_days}]
+    payment_webhook_secret: str | None = None
+
     # LLM
     llm_api_key: str | None = None
     llm_api_base: str = "https://api.deepseek.com"
@@ -652,15 +656,19 @@ class SSEStreamer:
 ```python
 # fastkeel/cli/new.py
 
-@click.command()
-@click.argument("name")
-@click.option("--with-user", is_flag=True, default=True)
-@click.option("--with-social", is_flag=True, default=False)
-@click.option("--with-payment", is_flag=True, default=False)
-@click.option("--with-jobs", is_flag=True, default=False)
-@click.option("--with-llm", is_flag=True, default=False)
-@click.option("--path", default=".")
-def new(name, with_user, with_social, with_jobs, with_llm, path):
+import typer
+
+app = typer.Typer()
+
+@app.command()
+def new(
+    name: str = typer.Argument(help="项目名称"),
+    with_user: bool = True,
+    with_social: bool = False,
+    with_payment: bool = False,
+    with_jobs: bool = False,
+    path: str = ".",
+):
     """生成新项目骨架。"""
     target_dir = Path(path) / name
     target_dir.mkdir(parents=True, exist_ok=True)
@@ -675,13 +683,13 @@ def new(name, with_user, with_social, with_jobs, with_llm, path):
             project_name=name,
             with_user=with_user,
             with_social=with_social,
+            with_payment=with_payment,
             with_jobs=with_jobs,
-            with_llm=with_llm,
         ))
     
-    click.echo(f"✅ {name} 已创建在 {target_dir}")
-    click.echo(f"   cd {name}")
-    click.echo(f"   pip install -e .")
+    typer.echo(f"✅ {name} 已创建在 {target_dir}")
+    typer.echo(f"   cd {name}")
+    typer.echo(f"   pip install -e .")
 ```
 
 ### 6.2 项目模板关键内容
@@ -731,12 +739,6 @@ enable_groups = true
 # weekly_report = { trigger = "cron", hour = 10, minute = 0, day_of_week = "sun" }
 {% endif %}
 
-{% if with_llm %}
-[llm]
-api_key = ""
-api_base = "https://api.deepseek.com"
-model = "deepseek-chat"
-{% endif %}
 ```
 
 ---
@@ -969,14 +971,16 @@ jobs:
 
 ---
 
-## 12. 未解决问题（TBD）
+## 12. 已决策事项（原 TBD）
 
-| # | 问题 | 待决策 |
-|:-:|:-----|:-------|
-| 1 | **SQLAlchemy 模型扩展字段的具体实现** | 方案 A：`user_extra_fields` → `ALTER TABLE ADD COLUMN`。方案 B：独立的 `UserExtra` 表（JSON 字段）。我的倾向：方案 A，更直接 |
-| 2 | **jobs 模块的任务函数路由** | 方案 A：按命名约定自动 resolve（`project.logic.{job_name}`）。方案 B：需要显式注册。倾向方案 A |
-| 3 | **模板语言选择** | Jinja2 vs Mako。倾向 Jinja2（FastAPI 内置支持）|
-| 4 | **CLI 框架** | Click vs Typer。倾向 Typer（基于 Click，但类型提示更好）|
-| 5 | **异步任务持久化** | APScheduler 的 SQLiteJobStore 是否需要默认启用？无持久化的话，进程重启后任务丢失。倾向默认启用 |
-| 6 | **日志库** | structlog vs loguru vs 标准库 logging。倾向 structlog（结构化日志，适合多项目复用）|
-| 7 | **支付渠道支持的默认实现** | fastkeel 是否需要内置一个演示用的收据验证（比如接受任何收据并标记为 valid 用于开发测试）？建议默认带一个 `dev` provider 用于本地开发，生产环境再注册真实渠道 |
+以下 7 项已在 2026-06-11 经讨论确认，决策原因见下：
+
+| # | 问题 | 决策 | 原因 |
+|:-:|:-----|:----|:-----|
+| 1 | **SQLAlchemy 模型扩展字段** | `ALTER TABLE ADD COLUMN` | SQLite 原生支持，零 JOIN，类型安全。扩展字段在项目初始化时一次性定义，上线后几乎不修改，不会产生 schema drift 问题 |
+| 2 | **jobs 任务函数路由** | 命名约定自动 resolve | 约定优于配置：`project/logic/` 目录结构本身就是注册表。重构友好——重命名函数时文件同步改名，不用改两处 |
+| 3 | **模板语言** | Jinja2 | FastAPI PackageLoader 立即可用，`fastkeel new` 场景只做简单变量替换，不需要 Mako 的高级能力。选保守技术降低维护成本 |
+| 4 | **CLI 框架** | Typer | 底层就是 Click（生态不损失），类型提示驱动减少 60% 样板代码。FastAPI 作者同款 |
+| 5 | **异步任务持久化** | 默认启用 SQLiteJobStore | 零外部服务假设下，SQLiteJobStore 不需要额外基础设施。戒了么手机的定时任务（晚间反思、周报）若因进程重启丢失，用户体验极差 |
+| 6 | **日志库** | structlog | 兼容 stdlib logging，fastkeel 模块和项目代码共享同一套配置。输出结构化 JSON 方便生产采集（CloudWatch/ELK）。零额外纯 Python 依赖 |
+| 7 | **内置 dev 收据验证** | 包含 `dev` provider | 收据验证走网络，开发时阻塞联调。`dev` provider 只读 `receipt.plan_id`，不走网络。`debug=False` 时自动禁用，不会漏到生产。代码量约 15 行 |

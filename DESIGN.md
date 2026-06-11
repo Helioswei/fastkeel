@@ -42,9 +42,10 @@ fastkeel/
 │   │   ├── auth.py                   # 匿名 JWT + 设备绑定
 │   │   └── middleware.py             # CORS / 日志 / 错误处理
 │   ├── modules/                      # 90% 通用，按需选装
-│   │   ├── user.py                   # 用户 CRUD（可扩展字段）
-│   │   ├── social.py                 # 好友/群组关系
-│   │   └── jobs.py                   # APScheduler 封装
+│   │   ├── user.py               # 用户 CRUD（可扩展字段）
+│   │   ├── social.py             # 好友/群组关系
+│   │   ├── payment.py            # 订阅管理 + 收据验证 + 支付流水
+│   │   └── jobs.py               # APScheduler 封装
 │   ├── contrib/                      # 扩展集成，不强制导入
 │   │   ├── llm.py                    # LLM API 调用 + 重试 + 限流
 │   │   └── streaming.py              # SSE 流式响应
@@ -138,13 +139,19 @@ class DetoxScore(Base):
 
 | 模块 | 提供 | 依赖 | CLI 参数 |
 |:----|:-----|:-----|:---------|
-| `user` | 注册/登录/资料/设备绑定 | core | `--with-user` |
-| `social` | 好友/群组/邀请码 CRUD | user | `--with-social` |
-| `payment` | 订阅管理/收据验证/支付流水 | user | `--with-payment` |
-| `jobs` | APScheduler + 任务注册 | db | `--with-jobs` |
-| `llm` | LLM API 调用 + 重试 + 限流 | core | `--with-llm` |
+|| `user` | 注册/登录/资料/设备绑定 | core | `--with-user` |
+|| `social` | 好友/群组/邀请码 CRUD | user | `--with-social` |
+|| `payment` | 订阅管理/收据验证/支付流水 | user | `--with-payment` |
+|| `jobs` | APScheduler + 任务注册 | db | `--with-jobs` |
 
 不选的模块不注册路由、不创建表、不引入依赖。
+
+`contrib/` 下的工具不走 `include_*()`，项目按需 import：
+
+```python
+from fastkeel.contrib.llm import LLMClient
+from fastkeel.contrib.streaming import SSEStreamer
+```
 
 ---
 
