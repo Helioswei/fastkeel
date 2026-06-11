@@ -1,6 +1,6 @@
 # fastkeel/modules/payment.py
 import uuid
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from typing import Any, Callable
 
 from fastapi import APIRouter, Depends, FastAPI, HTTPException, Request, status
@@ -165,7 +165,7 @@ def verify_receipt(
 
     plan = db.query(SubscriptionPlan).filter(
         SubscriptionPlan.id == body.plan_id,
-        SubscriptionPlan.is_active == True,
+        SubscriptionPlan.is_active.is_(True),
     ).first()
 
     if plan is None:
@@ -174,7 +174,7 @@ def verify_receipt(
             detail=f"Plan not found: {body.plan_id}",
         )
 
-    now = datetime.utcnow()
+    now = datetime.now(timezone.utc).replace(tzinfo=None)
     existing = db.query(Subscription).filter(
         Subscription.user_id == current_user.id,
         Subscription.status.in_(["active", "cancelled"]),
@@ -232,7 +232,7 @@ def get_subscription(
     if sub is None:
         return SubscriptionStatusResponse(has_active=False)
 
-    now = datetime.utcnow()
+    now = datetime.now(timezone.utc).replace(tzinfo=None)
     is_active = sub.status == "active" and sub.end_date > now
 
     if not is_active and sub.status == "active":
@@ -300,7 +300,7 @@ def list_plans(
     db: Session = Depends(get_db),
 ) -> list[PlanResponse]:
     plans = db.query(SubscriptionPlan).filter(
-        SubscriptionPlan.is_active == True,
+        SubscriptionPlan.is_active.is_(True),
     ).all()
     return [PlanResponse.model_validate(p) for p in plans]
 
