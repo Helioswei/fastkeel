@@ -32,5 +32,5 @@ dev = [
 [project.urls]
 Homepage = "https://github.com/helioswei/fastkeel"
 
-[project.scripts]
-fastkeel = "fastkeel.cli:app"
+# [project.scripts]
+# fastkeel = "fastkeel.cli:app"  # Phase 2: CLI module
