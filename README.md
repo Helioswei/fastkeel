@@ -118,11 +118,13 @@ pytest tests/test_modules/test_user.py -v
 
 ---
 
-## 设计文档
+## Roadmap
 
-- [DESIGN.md](./DESIGN.md) — 设计理念、分层规则、模块规格
-- [TAD.md](./TAD.md) — 详细技术方案、API 签名、测试策略
-- [CLAUDE.md](./CLAUDE.md) — 给 AI 助手的代码库指南
+- [ ] **PyPI release** — `python -m build && twine upload dist/*`
+- [ ] **`user_extra_fields` dynamic columns** — `ALTER TABLE ADD COLUMN` from config
+- [ ] **End-to-end generated project test** — `fastkeel new` → `pip install` → serve → curl
+- [ ] **Graceful jobs shutdown** — scheduler shutdown on app lifespan
+- [ ] **Webhook signature verification** — validate `payment_webhook_secret`
 
 ---
 
