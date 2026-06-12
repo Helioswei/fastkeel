@@ -33,3 +33,6 @@ DESIGN.md
 TAD.md
 CLAUDE.md
 docs/
+
+# Lock files (library, not an application)
+uv.lock
