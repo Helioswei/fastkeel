@@ -27,3 +27,9 @@ Thumbs.db
 *.db
 *.sqlite3
 /data/
+
+# Internal design docs (not for public)
+DESIGN.md
+TAD.md
+CLAUDE.md
+docs/
