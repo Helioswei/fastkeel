@@ -1,4 +1,5 @@
 # fastkeel/modules/jobs.py
+import atexit
 import logging
 from typing import Any
 
@@ -54,3 +55,6 @@ def include_jobs(app: FastAPI, config: Config) -> None:
             )
 
     scheduler.start()
+
+    # Ensure clean shutdown on process exit
+    atexit.register(lambda: scheduler.shutdown(wait=False) if scheduler else None)

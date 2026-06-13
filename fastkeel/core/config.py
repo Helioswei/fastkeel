@@ -104,7 +104,11 @@ class Config:
         return config
 
     def _apply_env_overrides(self) -> None:
-        """Override fields from FASTKEEL_* environment variables."""
+        """Override fields from FASTKEEL_* environment variables.
+
+        Supports both flat names (FASTKEEL_DB_URL) and nested-style names
+        (FASTKEEL_LLM_API_KEY) — both resolve to the same field.
+        """
         field_map = {f.name: f.type for f in fields(self)}
 
         for field_name, field_type in field_map.items():
@@ -112,12 +116,3 @@ class Config:
             env_value = os.environ.get(env_key)
             if env_value is not None and env_value != "":
                 setattr(self, field_name, _env_to_field_value(env_value, field_type))
-
-        # Also handle nested-style env vars (e.g. FASTKEEL_LLM_API_KEY)
-        for field_name, field_type in field_map.items():
-            if "_" in field_name:
-                parts = field_name.split("_", 1)
-                env_key = f"{ENV_PREFIX}{parts[0].upper()}_{parts[1].upper()}"
-                env_value = os.environ.get(env_key)
-                if env_value is not None and env_value != "":
-                    setattr(self, field_name, _env_to_field_value(env_value, field_type))

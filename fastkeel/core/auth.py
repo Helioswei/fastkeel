@@ -31,7 +31,7 @@ def set_config_for_dependency(config: Config) -> None:
 
 def _get_jwt_secret(config: Config) -> str:
     """Return jwt_secret or raise if empty."""
-    if not config.jwt_secret:
+    if config.jwt_secret == "":
         raise ValueError("jwt_secret is empty — set a secret key in config")
     return config.jwt_secret
 
@@ -64,7 +64,13 @@ def verify_token(token: str, config: Config) -> str:
             algorithms=[config.jwt_algorithm],
             options={"verify_exp": True},
         )
-        return payload["sub"]
+        user_id = payload.get("sub")
+        if user_id is None:
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Invalid token: missing subject",
+            )
+        return user_id
     except jwt.ExpiredSignatureError:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,

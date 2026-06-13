@@ -252,6 +252,7 @@ def get_subscription(
 async def payment_webhook(
     request: Request,
     config: Config = Depends(_get_config),
+    db: Session = Depends(get_db),
 ) -> dict:
     body = await request.json()
     provider = request.headers.get("X-Provider", request.headers.get("x-provider", "unknown"))
@@ -264,35 +265,21 @@ async def payment_webhook(
         )
 
     event = parser(body, dict(request.headers))
-    db = next(get_db())
 
-    try:
+    sub_id = event.get("subscription_id")
+    sub = db.get(Subscription, sub_id) if sub_id else None
+    if sub:
         if event["type"] == "renewal":
-            sub = db.query(Subscription).filter(
-                Subscription.id == event.get("subscription_id"),
-            ).first()
-            if sub and event.get("new_end_date"):
+            if event.get("new_end_date"):
                 sub.end_date = datetime.fromisoformat(event["new_end_date"].replace("Z", "+00:00"))
-                sub.status = "active"
-                db.commit()
+            sub.status = "active"
         elif event["type"] == "cancellation":
-            sub = db.query(Subscription).filter(
-                Subscription.id == event.get("subscription_id"),
-            ).first()
-            if sub:
-                sub.auto_renew = False
-                db.commit()
+            sub.auto_renew = False
         elif event["type"] == "refund":
-            sub = db.query(Subscription).filter(
-                Subscription.id == event.get("subscription_id"),
-            ).first()
-            if sub:
-                sub.status = "refunded"
-                db.commit()
+            sub.status = "refunded"
+        db.commit()
 
-        return {"ok": True}
-    finally:
-        db.close()
+    return {"ok": True}
 
 
 @payment_router.get("/plans", response_model=list[PlanResponse])
@@ -308,10 +295,10 @@ def list_plans(
 def _seed_plans(config: Config, db: Session) -> None:
     if not config.payment_plans:
         return
+    # Single existence check to skip N queries on subsequent startups
+    if db.query(SubscriptionPlan).first() is not None:
+        return
     for plan_data in config.payment_plans:
-        existing = db.get(SubscriptionPlan, plan_data["id"])
-        if existing:
-            continue
         plan = SubscriptionPlan(
             id=plan_data["id"],
             name=plan_data["name"],
