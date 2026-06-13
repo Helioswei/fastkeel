@@ -4,7 +4,14 @@ from pathlib import Path
 import typer
 from jinja2 import Environment, PackageLoader
 
-app = typer.Typer(help="fastkeel - FastAPI backend scaffold")
+app = typer.Typer()
+
+
+@app.callback(invoke_without_command=True)
+def main(ctx: typer.Context):
+    """fastkeel - FastAPI 后端项目脚手架"""
+    if ctx.invoked_subcommand is None:
+        typer.echo(ctx.get_help())
 
 
 @app.command()
@@ -54,4 +61,4 @@ def new(
 
     typer.echo(f"✅ {name} 已创建在 {target_dir}")
     typer.echo(f"   cd {name}")
-    typer.echo("   pip install -e .")
+    typer.echo(f"   python3 main.py")

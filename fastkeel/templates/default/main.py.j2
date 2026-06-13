@@ -14,3 +14,7 @@ app = create_app(config)
 {% if with_payment %}include_payment(app, config){% endif %}
 {% if with_jobs %}include_jobs(app, config){% endif %}
 app.include_router(biz_router, prefix="/api/v1")
+
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run("main:app", host=config.host, port=config.port, reload=True)

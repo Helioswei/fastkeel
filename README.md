@@ -3,7 +3,7 @@
 > FastAPI backend scaffold — user auth, social, subscriptions, jobs & LLM.
 > `pip install fastkeel`，一行命令生成完整后端骨架。
 
-**Status:** v0.1.0 — 生产就绪，[MIT](./LICENSE) 开源。
+**Status:** v0.1.1 — 生产就绪，[MIT](./LICENSE) 开源。
 
 ---
 
@@ -17,9 +17,8 @@ pip install fastkeel
 fastkeel new my-app --with-user --with-social --with-payment --with-jobs
 cd my-app
 
-# 安装依赖并启动
-pip install uvicorn
-python main.py
+# 启动
+python3 main.py
 ```
 
 生成的项目直接可用：注册、登录、搭子关系、支付订阅、定时任务 — 一个 `main.py` 全搞定。
@@ -89,7 +88,7 @@ fastkeel (this repo)
 # Setup
 git clone https://github.com/helioswei/fastkeel
 cd fastkeel
-python -m venv .venv && source .venv/bin/activate
+python3 -m venv .venv && source .venv/bin/activate
 pip install -e ".[dev]"
 
 # Commands
@@ -102,7 +101,7 @@ make publish        # build + twine upload
 pytest tests/test_modules/test_user.py -v
 ```
 
-### 测试 (122 tests, 1.5s)
+### 测试 (122 tests)
 
 | 测试集 | 测试数 |
 |:-------|:-------|
@@ -120,7 +119,7 @@ pytest tests/test_modules/test_user.py -v
 
 ## Roadmap
 
-- [ ] **PyPI release** — `python -m build && twine upload dist/*`
+- [x] **PyPI release** — `python -m build && twine upload dist/*`
 - [ ] **`user_extra_fields` dynamic columns** — `ALTER TABLE ADD COLUMN` from config
 - [ ] **End-to-end generated project test** — `fastkeel new` → `pip install` → serve → curl
 - [ ] **Webhook signature verification** — validate `payment_webhook_secret`

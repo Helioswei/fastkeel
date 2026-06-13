@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "fastkeel"
-version = "0.1.0"
+version = "0.1.1"
 description = "FastAPI backend scaffold — user auth, social, subscriptions, jobs & LLM"
 authors = [{ name = "Helioswei" }]
 license = { text = "MIT" }

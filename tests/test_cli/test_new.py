@@ -21,7 +21,7 @@ class TestCliNew:
     """Test the `fastkeel new` command."""
 
     def test_new_creates_project_structure(self, runner, tmp_project):
-        result = runner.invoke(app, ["my-app", "--path", str(tmp_project)])
+        result = runner.invoke(app, ["new", "my-app", "--path", str(tmp_project)])
         assert result.exit_code == 0
 
         project_dir = tmp_project / "my-app"
@@ -32,7 +32,7 @@ class TestCliNew:
         assert (project_dir / "tests").is_dir()
 
     def test_new_main_contains_user_import(self, runner, tmp_project):
-        result = runner.invoke(app, ["test-app", "--path", str(tmp_project)])
+        result = runner.invoke(app, ["new", "test-app", "--path", str(tmp_project)])
         assert result.exit_code == 0
 
         main_py = (tmp_project / "test-app" / "main.py").read_text()
@@ -41,14 +41,14 @@ class TestCliNew:
 
     def test_new_without_user_flag(self, runner, tmp_project):
         """When --with-user is False, user module should not be imported."""
-        result = runner.invoke(app, ["no-user", "--path", str(tmp_project), "--no-with-user"])
+        result = runner.invoke(app, ["new", "no-user", "--path", str(tmp_project), "--no-with-user"])
         assert result.exit_code == 0
 
         main_py = (tmp_project / "no-user" / "main.py").read_text()
         assert "include_user" not in main_py
 
     def test_new_with_social_flag(self, runner, tmp_project):
-        result = runner.invoke(app, ["social-app", "--path", str(tmp_project), "--with-social"])
+        result = runner.invoke(app, ["new", "social-app", "--path", str(tmp_project), "--with-social"])
         assert result.exit_code == 0
 
         main_py = (tmp_project / "social-app" / "main.py").read_text()
@@ -58,7 +58,7 @@ class TestCliNew:
         assert "[social]" in config
 
     def test_new_with_payment_flag(self, runner, tmp_project):
-        result = runner.invoke(app, ["pay-app", "--path", str(tmp_project), "--with-payment"])
+        result = runner.invoke(app, ["new", "pay-app", "--path", str(tmp_project), "--with-payment"])
         assert result.exit_code == 0
 
         main_py = (tmp_project / "pay-app" / "main.py").read_text()
@@ -68,7 +68,7 @@ class TestCliNew:
         assert "[payment]" in config
 
     def test_new_with_jobs_flag(self, runner, tmp_project):
-        result = runner.invoke(app, ["jobs-app", "--path", str(tmp_project), "--with-jobs"])
+        result = runner.invoke(app, ["new", "jobs-app", "--path", str(tmp_project), "--with-jobs"])
         assert result.exit_code == 0
 
         main_py = (tmp_project / "jobs-app" / "main.py").read_text()
@@ -79,7 +79,7 @@ class TestCliNew:
 
     def test_new_with_multiple_flags(self, runner, tmp_project):
         result = runner.invoke(app, [
-            "full-app", "--path", str(tmp_project),
+            "new", "full-app", "--path", str(tmp_project),
             "--with-user", "--with-social", "--with-payment", "--with-jobs",
         ])
         assert result.exit_code == 0
@@ -91,14 +91,14 @@ class TestCliNew:
         assert "include_jobs" in main_py
 
     def test_new_project_routes_template(self, runner, tmp_project):
-        result = runner.invoke(app, ["routes-app", "--path", str(tmp_project)])
+        result = runner.invoke(app, ["new", "routes-app", "--path", str(tmp_project)])
         assert result.exit_code == 0
 
         routes = (tmp_project / "routes-app" / "project" / "routes" / "__init__.py").read_text()
         assert "router = APIRouter()" in routes
 
     def test_new_conftest_generated(self, runner, tmp_project):
-        result = runner.invoke(app, ["conf-app", "--path", str(tmp_project)])
+        result = runner.invoke(app, ["new", "conf-app", "--path", str(tmp_project)])
         assert result.exit_code == 0
 
         conftest = (tmp_project / "conf-app" / "tests" / "conftest.py").read_text()
