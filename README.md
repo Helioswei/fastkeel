@@ -3,7 +3,7 @@
 > FastAPI backend scaffold — user auth, social, subscriptions, jobs & LLM.
 > `pip install fastkeel`，一行命令生成完整后端骨架。
 
-**Status:** v0.5.0 — 生产就绪，[MIT](./LICENSE) 开源。
+**Status:** v0.1.0 — 生产就绪，[MIT](./LICENSE) 开源。
 
 ---
 
@@ -123,7 +123,6 @@ pytest tests/test_modules/test_user.py -v
 - [ ] **PyPI release** — `python -m build && twine upload dist/*`
 - [ ] **`user_extra_fields` dynamic columns** — `ALTER TABLE ADD COLUMN` from config
 - [ ] **End-to-end generated project test** — `fastkeel new` → `pip install` → serve → curl
-- [ ] **Graceful jobs shutdown** — scheduler shutdown on app lifespan
 - [ ] **Webhook signature verification** — validate `payment_webhook_secret`
 
 ---
